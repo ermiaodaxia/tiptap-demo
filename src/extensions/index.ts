@@ -37,3 +37,6 @@ export { default as Fullscreen } from './fullscreen';
 export { default as Print } from './print';
 export { default as SelectAll } from './select-all';
 export { default as CodeView } from './code-view';
+
+// 后期添加
+export {default as Collaboration} from './collaboration'
