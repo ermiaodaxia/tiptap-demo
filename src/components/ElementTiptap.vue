@@ -1,50 +1,36 @@
 <template>
-  <div
-    v-if="editor"
-    :style="editorStyle"
-    :class="[
-      {
-        'el-tiptap-editor': true,
-        'el-tiptap-editor--fullscreen': isFullscreen,
-        'el-tiptap-editor--with-footer': showFooter,
-      },
-      editorClass,
-    ]"
-  >
+  <div v-if="editor" :style="editorStyle" :class="[
+    {
+      'el-tiptap-editor': true,
+      'el-tiptap-editor--fullscreen': isFullscreen,
+      'el-tiptap-editor--with-footer': showFooter,
+    },
+    editorClass,
+  ]">
     <menu-bubble :editor="editor" :class="editorBubbleMenuClass" />
 
     <menu-bar :editor="editor" :class="editorMenubarClass" />
 
-    <div
-      v-if="isCodeViewMode"
-      :class="{
-        'el-tiptap-editor__codemirror': true,
-        'border-bottom-radius': isCodeViewMode,
-      }"
-    >
+    <div v-if="isCodeViewMode" :class="{
+      'el-tiptap-editor__codemirror': true,
+      'border-bottom-radius': isCodeViewMode,
+    }">
       <textarea ref="cmTextAreaRef"></textarea>
     </div>
 
-    <editor-content
-      v-show="!isCodeViewMode"
-      :editor="editor"
-      :class="[
-        {
-          'el-tiptap-editor__content': true,
-        },
-        editorContentClass,
-      ]"
-    />
+    <editor-content v-show="!isCodeViewMode" :editor="editor" :class="[
+      {
+        'el-tiptap-editor__content': true,
+      },
+      editorContentClass,
+    ]" />
 
-    <div
-      v-if="showFooter"
-      :class="[
-        {
-          'el-tiptap-editor__footer': true,
-        },
-        editorFooterClass,
-      ]"
-    >
+    <div v-if="showFooter" :class="[
+      {
+        'el-tiptap-editor__footer': true,
+      },
+      editorFooterClass,
+    ]">
       <span class="el-tiptap-editor__characters">
         {{ t('editor.characters') }}: {{ characters }}
       </span>
@@ -68,9 +54,13 @@ import TiptapPlaceholder from '@tiptap/extension-placeholder';
 import CharacterCount from '@tiptap/extension-character-count';
 import { Trans } from '@/i18n';
 import { useCodeView, useCharacterCount, useEditorStyle } from '@/hooks';
+import Collaboration from '@tiptap/extension-collaboration'
 
 import MenuBar from './MenuBar/index.vue';
 import MenuBubble from './MenuBubble/index.vue';
+
+import * as Y from 'yjs'
+import { HocuspocusProvider } from '@hocuspocus/provider'
 
 interface Props {
   extensions: Extensions;
@@ -92,6 +82,14 @@ interface Props {
   editorMenubarClass: string | string[] | Record<string, boolean>;
   editorBubbleMenuClass: string | string[] | Record<string, boolean>;
   editorFooterClass: string | string[] | Record<string, boolean>;
+  yOptions: YOptions
+}
+
+interface YOptions {
+  url: string
+  name: string
+  params: any
+  token: string
 }
 
 export default defineComponent({
@@ -104,12 +102,21 @@ export default defineComponent({
   },
 
   props: {
+    yOptions: {
+      // type: YOptions,
+      default: {
+        url: '',
+        name: '',
+        parameters: {},
+        token:''
+      },
+    },
     content: {
       type: String,
       default: '',
     },
     extensions: {
-      type: Array,
+      type: Array<any>,
       default: [],
     },
     placeholder: {
@@ -184,6 +191,17 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
+    const ydoc = new Y.Doc();
+    console.log(props.yOptions);
+    const provider = new HocuspocusProvider({
+      url: props.yOptions.url,
+      name: props.yOptions.name,
+      token:props.yOptions.token,
+      document: ydoc,
+      parameters: props.yOptions.parameters,
+    });
+
+
     const extensions = props.extensions
       .concat([
         TiptapPlaceholder.configure({
@@ -196,10 +214,16 @@ export default defineComponent({
         }),
         props.enableCharCount
           ? CharacterCount.configure({
-              limit: props.charCountMax,
-            })
+            limit: props.charCountMax,
+          })
           : null,
       ])
+      .concat([
+        Collaboration.configure({
+          document: ydoc,
+        }
+        )]
+      )
       .filter(Boolean);
 
     const onUpdate = ({ editor }: { editor: Editor }) => {
