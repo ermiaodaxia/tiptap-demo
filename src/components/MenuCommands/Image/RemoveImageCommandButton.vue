@@ -29,14 +29,12 @@ export default defineComponent({
   setup() {
     const t = inject('t');
     const enableTooltip = inject('enableTooltip', true);
-
     return { t, enableTooltip };
   },
 
   methods: {
     removeImage() {
-      const a = this.editor?.commands.deleteNode('image');
-      console.log(a);
+     this.editor?.commands.deleteSelection()
     },
   },
 });

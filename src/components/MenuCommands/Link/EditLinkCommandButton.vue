@@ -6,10 +6,10 @@
       :tooltip="t('editor.extensions.Link.edit.tooltip')"
       icon="edit"
     />
-
+<!--:visible.sync="editLinkDialogVisible"-->
     <el-dialog
       :title="t('editor.extensions.Link.edit.control.title')"
-      :visible.sync="editLinkDialogVisible"
+      v-model="editLinkDialogVisible"
       :append-to-body="true"
       width="400px"
       custom-class="el-tiptap-edit-link-dialog"
@@ -108,6 +108,7 @@ export default defineComponent({
     },
 
     openEditLinkDialog() {
+      console.log('openEditLinkDialog');
       this.editLinkDialogVisible = true;
     },
 

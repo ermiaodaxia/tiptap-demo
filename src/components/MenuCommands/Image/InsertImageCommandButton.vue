@@ -145,14 +145,18 @@ export default defineComponent({
       const { file } = requestOptions;
 
       const uploadRequest = this.imageNodeOptions.uploadRequest;
-
       const loadingInstance = ElLoading.service({
         target: '.el-tiptap-upload',
       });
       try {
-        const url = await (uploadRequest
-          ? uploadRequest(file)
-          : readFileDataUrl(file));
+        let url:string;
+        if(uploadRequest){
+          const data:any = await (uploadRequest(file));
+          url = data?.url
+        }else{
+          url = await(readFileDataUrl(file))
+        }
+
         this.editor.commands.setImage({ src: url });
         this.imageUploadDialogVisible = false;
       } catch (e) {

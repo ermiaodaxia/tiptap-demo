@@ -5,6 +5,7 @@
     popper-class="el-tiptap-dropdown-popper"
     @command="toggleHeading"
   >
+  <div>
     <command-button
       :enable-tooltip="enableTooltip"
       :is-active="editor.isActive('heading')"
@@ -12,7 +13,8 @@
       :disabled="isCodeViewMode"
       icon="heading"
     />
-    <template #dropdown>
+  </div>
+   <template #dropdown>
       <el-dropdown-menu slot="dropdown" class="el-tiptap-dropdown-menu">
         <el-dropdown-item
           v-for="level in [0, ...levels]"
@@ -76,7 +78,7 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props) {
     const t = inject('t');
     const enableTooltip = inject('enableTooltip', true);
     const isCodeViewMode = inject('isCodeViewMode', false);

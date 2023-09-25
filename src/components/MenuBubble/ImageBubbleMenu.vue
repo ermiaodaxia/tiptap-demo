@@ -4,7 +4,7 @@
 
     <edit-image-command-button :node="node" :update-attrs="updateAttrs" />
 
-    <remove-image-command-button :editor="editor" />
+    <remove-image-command-button :editor="editor"  />
   </div>
 </template>
 
