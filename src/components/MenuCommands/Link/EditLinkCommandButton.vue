@@ -106,7 +106,7 @@ export default defineComponent({
             trigger:'change'
           },
           {
-            pattern:/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\*\+,;=.]+$/,
+            pattern:/(http|https):\/\/([\w.]+\/?)\S*/,
             message:'请输入以http或https开头的正确链接',
             trigger:'change'
           }

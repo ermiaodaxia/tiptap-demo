@@ -192,7 +192,7 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const ydoc = new Y.Doc();
-    console.log('tiptap 1.0.8');
+    console.log('tiptap 1.0.10');
     const provider = new HocuspocusProvider({
       url: props.yOptions.url,
       name: props.yOptions.name,
