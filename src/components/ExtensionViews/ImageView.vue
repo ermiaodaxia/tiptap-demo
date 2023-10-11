@@ -35,7 +35,7 @@
       bubble menu's position is miscalculated
       use el-popover instead bubble menu -->
       <el-popover
-        :visible="selected"
+        :visible="selected && editor?.isEditable"
         :show-arrow="false"
         placement="top"
         popper-class="el-tiptap-image-popper"

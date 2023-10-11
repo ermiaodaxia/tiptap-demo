@@ -7,10 +7,10 @@
     },
     editorClass,
   ]">
-    <menu-bubble :editor="editor" :class="editorBubbleMenuClass" />
+    <menu-bubble :editor="editor" v-if="!readonly" :class="editorBubbleMenuClass" />
 
-    <menu-bar :editor="editor" :class="editorMenubarClass" />
-
+    <menu-bar :editor="editor" v-if="!readonly" :class="editorMenubarClass" />
+    <slot name="title"/>
     <div v-if="isCodeViewMode" :class="{
       'el-tiptap-editor__codemirror': true,
       'border-bottom-radius': isCodeViewMode,
@@ -192,7 +192,7 @@ export default defineComponent({
 
   setup(props, { emit }) {
     const ydoc = new Y.Doc();
-    console.log(props.yOptions);
+    console.log('tiptap 1.0.8');
     const provider = new HocuspocusProvider({
       url: props.yOptions.url,
       name: props.yOptions.name,
