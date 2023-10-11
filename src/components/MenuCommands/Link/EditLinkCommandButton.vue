@@ -14,12 +14,12 @@
       width="400px"
       custom-class="el-tiptap-edit-link-dialog"
     >
-      <el-form :model="linkAttrs" label-position="right" size="small">
+      <el-form :model="linkAttrs" label-position="right" size="small" :rules="rules" ref="formRef">
         <el-form-item
           :label="t('editor.extensions.Link.edit.control.href')"
           prop="href"
         >
-          <el-input v-model="linkAttrs.href" autocomplete="off" />
+          <el-input v-model="linkAttrs.href" autocomplete="off" placeholder="请填写以http或https开头的完整url"/>
         </el-form-item>
 
         <el-form-item prop="openInNewTab">
@@ -39,7 +39,7 @@
           size="small"
           round
           @mousedown.prevent
-          @click="updateLinkAttrs"
+          @click="updateLinkAttrs(formRef)"
         >
           {{ t('editor.extensions.Link.edit.control.confirm') }}
         </el-button>
@@ -58,9 +58,10 @@ import {
   ElInput,
   ElCheckbox,
   ElButton,
+  ElMessage
 } from 'element-plus';
 import CommandButton from '../CommandButton.vue';
-
+import { ref } from 'vue'
 export default defineComponent({
   name: 'EditLinkCommandButton',
 
@@ -89,26 +90,44 @@ export default defineComponent({
   setup() {
     const t = inject('t');
     const enableTooltip = inject('enableTooltip', true);
-
-    return { t, enableTooltip };
+    const formRef = ref()
+    return { t, enableTooltip, formRef };
   },
 
   data() {
     return {
       linkAttrs: this.initLinkAttrs,
       editLinkDialogVisible: false,
+      rules:{
+        href:[
+          {
+            required:true,
+            message:'链接不能为空',
+            trigger:'change'
+          },
+          {
+            pattern:/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\*\+,;=.]+$/,
+            message:'请输入以http或https开头的正确链接',
+            trigger:'change'
+          }
+        ]
+      }
     };
   },
 
   methods: {
-    updateLinkAttrs() {
-      this.editor.commands.setLink(this.linkAttrs);
-
-      this.closeEditLinkDialog();
+    updateLinkAttrs(formEl:any) {
+      formEl.validate((valid:any, fields:any) => {
+        console.log(valid);
+        if (valid) {
+          this.editor.commands.setLink(this.linkAttrs);
+          this.closeEditLinkDialog();
+        }
+     })
+     
     },
 
     openEditLinkDialog() {
-      console.log('openEditLinkDialog');
       this.editLinkDialogVisible = true;
     },
 

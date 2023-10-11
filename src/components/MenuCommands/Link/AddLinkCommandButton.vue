@@ -16,12 +16,12 @@
       width="400px"
       custom-class="el-tiptap-edit-link-dialog"
     >
-      <el-form :model="linkAttrs" label-position="right" size="small">
+      <el-form :model="linkAttrs" label-position="right" size="small" :rules="rules" ref="formRef">
         <el-form-item
           :label="t('editor.extensions.Link.add.control.href')"
           prop="href"
         >
-          <el-input v-model="linkAttrs.href" autocomplete="off" />
+          <el-input v-model="linkAttrs.href" autocomplete="off" placeholder="请填写以http或https开头的完整url" />
         </el-form-item>
 
         <el-form-item prop="openInNewTab">
@@ -41,7 +41,7 @@
           size="small"
           round
           @mousedown.prevent
-          @click="addLink"
+          @click="addLink(formRef)"
         >
           {{ t('editor.extensions.Link.add.control.confirm') }}
         </el-button>
@@ -62,7 +62,7 @@ import {
 } from 'element-plus';
 import { Editor } from '@tiptap/core';
 import CommandButton from '../CommandButton.vue';
-
+import { ref } from 'vue'
 export default defineComponent({
   name: 'AddLinkCommandButton',
 
@@ -87,8 +87,8 @@ export default defineComponent({
     const t = inject('t');
     const enableTooltip = inject('enableTooltip', true);
     const isCodeViewMode = inject('isCodeViewMode', true);
-
-    return { t, enableTooltip, isCodeViewMode };
+    const formRef = ref()
+    return { t, enableTooltip, isCodeViewMode,formRef };
   },
 
   data() {
@@ -97,8 +97,21 @@ export default defineComponent({
         href: '',
         openInNewTab: true,
       },
-
       addLinkDialogVisible: false,
+      rules:{
+        href:[
+          {
+            required:true,
+            message:'链接不能为空',
+            trigger:'change'
+          },
+          {
+            pattern: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\*\+,;=.]+$/,
+            message:'请输入以http或https开头的正确链接',
+            trigger:'change'
+          }
+        ]
+      }
     };
   },
 
@@ -117,17 +130,20 @@ export default defineComponent({
       this.addLinkDialogVisible = false;
     },
 
-    addLink() {
-      if (this.linkAttrs.openInNewTab) {
-        this.editor.commands.setLink({
-          href: this.linkAttrs.href,
-          target: '_blank',
-        });
-      } else {
-        this.editor.commands.setLink({ href: this.linkAttrs.href });
-      }
-
-      this.closeAddLinkDialog();
+    addLink(formEl:any) {
+      formEl.validate((valid:any, fields:any) => {
+        if (valid) {
+          if (this.linkAttrs.openInNewTab) {
+            this.editor.commands.setLink({
+              href: this.linkAttrs.href,
+              target: '_blank',
+            });
+          } else {
+            this.editor.commands.setLink({ href: this.linkAttrs.href });
+          }
+          this.closeAddLinkDialog();
+        }
+     })
     },
   },
 });
