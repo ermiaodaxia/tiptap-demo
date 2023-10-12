@@ -1,6 +1,6 @@
 <template>
   <div class="el-tiptap-editor__wrapper">
-    <el-tiptap :y-options="yOptions" :extensions="extensions" v-model:content="content" placeholder="Write something ..." />
+    <el-tiptap :enableCharCount="false" :y-options="yOptions" :extensions="extensions" v-model:content="content" placeholder="Write something ..." />
   </div>
 </template>
 
