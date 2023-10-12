@@ -1,6 +1,6 @@
 {
   "name": "tiptap-lib",
-  "version": "1.0.10",
+  "version": "0.0.1",
   "description": "🌸A modern WYSIWYG rich-text editor using tiptap and Element UI for Vue.js",
   "author": "vt",
   "scripts": {
